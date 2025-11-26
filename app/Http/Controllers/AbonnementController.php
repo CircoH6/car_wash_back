@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Abonnement;
+use Illuminate\Support\Facades\Validator;
+
+use function Laravel\Prompts\error;
 
 class AbonnementController extends Controller
 {
@@ -21,11 +24,11 @@ class AbonnementController extends Controller
                 'message' => 'Liste des abonnements récupérée avec succès.',
             ]);
         }
-         return response()->json([
+        return response()->json([
 
-                'status' => 'Echec',
-                'message' => 'Aucun abonnement trouvé.',
-            ]);
+            'status' => 'Echec',
+            'message' => 'Aucun abonnement trouvé.',
+        ]);
     }
 
     /**
@@ -33,6 +36,19 @@ class AbonnementController extends Controller
      */
     public function store(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'nom' => 'required|string|max:255',
+            'description' => 'required|string|max:1000',
+            'prix' => 'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'Echec',
+                'message' => 'Données des abonnements invalides.',
+                'errors' => $validator->errors(),
+            ], 400);
+        }
+
         $abonnement = Abonnement::create([
             'nom' => $request->nom,
             'description' => $request->description,
@@ -43,7 +59,7 @@ class AbonnementController extends Controller
             'status' => 'succès',
             'message' => 'abonnement créé avec succès.',
             'data' => $abonnement,
-        ], 201);
+        ], 200);
     }
 
     /**
@@ -51,7 +67,14 @@ class AbonnementController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $abonnement = Abonnement::find($id);
+
+        if($abonnement){
+            return response()->json([
+                'data'=>$abonnement,
+                'status'=> 'succès',
+            ], 200);
+        }
     }
 
     /**
@@ -59,7 +82,21 @@ class AbonnementController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $abonnement = Abonnement::findOrFail($id);
+        $validator = Validator::make($request->all(), [
+            'nom' => 'required|string|max:255',
+            'description' => 'required|string|max:1000',
+            'prix' => 'required|numeric',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'Echec',
+                'message' => 'Données des abonnements invalides.',
+                'errors' => $validator->errors(),
+            ], 400);
+        }
+
+        $abonnement = Abonnement::find($id);
 
         $abonnement = $abonnement->update([
             'nom' => $request->nom,
@@ -71,7 +108,7 @@ class AbonnementController extends Controller
             'status' => 'succès',
             'message' => 'abonnement mis à jour avec succès.',
             'data' => $abonnement,
-        ]);
+        ], 200);
     }
 
     /**
@@ -82,8 +119,9 @@ class AbonnementController extends Controller
         $abonnement = abonnement::find($id);
 
 
-        $abonnement->delete();
+        if($abonnement->delete()){
+            return response()->json(['message' => 'abonnement supprimée avec succès.'], 200);
+        }
 
-        return response()->json(['message' => 'abonnement supprimée avec succès.']);
     }
 }

@@ -18,10 +18,17 @@ class ReservationController extends Controller
     {
         $reservations = Reservation::with(['user', 'service'])->get();
 
+        if($reservations){
+            return response()->json([
+                'data' => $reservations,
+                'status' => 'success',
+                'message' => 'Liste des réservations récupérée avec succès.',
+            ]);
+        }
+
         return response()->json([
-            'data' => $reservations,
-            'status' => 'success',
-            'message' => 'Liste des réservations récupérée avec succès.',
+            'status' => 'échec',
+            'message' => 'Aucune réservation trouvé'
         ]);
     }
 
@@ -39,7 +46,7 @@ class ReservationController extends Controller
                 'status' => 'Echec',
                 'message' => 'Données de réservation invalides.',
                 'errors' => $validator->errors(),
-            ], 422);
+            ], 400);
         }
 
         $reservation = Reservation::create([
@@ -53,7 +60,7 @@ class ReservationController extends Controller
             'status' => 'succès',
             'message' => 'reservation créé avec succès.',
             'data' => $reservation,
-        ], 201);
+        ], 200);
     }
 
      /**
@@ -61,11 +68,19 @@ class ReservationController extends Controller
      */
     public function show(string $id)
     {
-        $reservation = Reservation::with(['user', 'service'])->findOrFail($id);
+        $reservation = Reservation::with(['user', 'service'])->find($id);
+
+        if ($reservation) {
+            return response()->json([
+                'data' => $reservation,
+                'status' => 'success',
+                'message' => 'Détails de la réservation récupérés avec succès.',
+            ]);
+        }
+
         return response()->json([
-            'data' => $reservation,
-            'status' => 'success',
-            'message' => 'Détails de la réservation récupérés avec succès.',
+            'status'=> 'échec',
+            'message' => 'Aucune réservation trouvé.',
         ]);
     }
 
@@ -74,6 +89,20 @@ class ReservationController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required|integer|',
+            'service_id' => 'required|integer',
+            'heure' => 'required|time|',
+            'date' => 'required|date|',
+        ]);
+        if($validator->fails()){
+            return response()->json([
+                'status' => 'Échec',
+                'message' => 'Données de réservation invalidées.',
+                'errors' => $validator->errors(),
+            ], 400);
+        }
+
         $reservation = Reservation::find($id);
 
         $reservation = $reservation->update($request->only(([
@@ -95,10 +124,10 @@ class ReservationController extends Controller
      */
     public function destroy(string $id)
     {
-        $reservation = Reservation::findOrFail($id);
+        $reservation = Reservation::find($id);
 
-        $reservation->delete();
-
-        return response()->json(['message' => 'reservation supprimée avec succès.']);
+        if ($reservation->delete()) {
+            return response()->json(['message' => 'reservation supprimée avec succès.'], 200);
+        }
     }
 }

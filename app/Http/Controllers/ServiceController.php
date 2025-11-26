@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Service;
+use Illuminate\Support\Facades\Validator;
 
 
 class ServiceController extends Controller
@@ -15,18 +16,11 @@ class ServiceController extends Controller
     {
         $services = Service::all();
 
-        if ($services) {
-            return response()->json([
-                'data' => $services,
-                'status' => 'success',
-                'message' => 'Liste des services récupérée avec succès.',
-            ]);
-        }
-         return response()->json([
-
-                'status' => 'Echec',
-                'message' => 'Aucun service trouvé.',
-            ]);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Liste des services récupérée avec succès.',
+            'data' => $services,
+        ]);
     }
 
     /**
@@ -34,6 +28,18 @@ class ServiceController extends Controller
      */
     public function store(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'nom' => 'required|string|max:255',
+            'description' => 'required|string|max:1000',
+            'prix' => 'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'Echec',
+                'message' => 'Données de service invalides.',
+                'errors' => $validator->errors(),
+            ], 400);
+        }
         $service = Service::create([
             'nom' => $request->nom,
             'description' => $request->description,
@@ -44,15 +50,27 @@ class ServiceController extends Controller
             'status' => 'succès',
             'message' => 'Service créé avec succès.',
             'data' => $service,
-        ], 201);
+        ], 200);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
-        //
+    public function show(string $id) {
+        $service = Service::find($id);
+
+        if ($service) {
+            return response()->json([
+                'data'=>$service,
+                'status'=>'success',
+                'message'=>'Détails du service récupéré avec succès',
+            ]);
+        }
+
+        return response()->json([
+            'status'=>'échec',
+            'message'=>'action invalide',
+        ], 400);
     }
 
     /**
@@ -60,7 +78,19 @@ class ServiceController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $service = Service::findOrFail($id);
+        $validator = Validator::make($request->all(), [
+            'nom' => 'required|string|max:255',
+            'description' => 'required|string|max:1000',
+            'prix' => 'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'Echec',
+                'message' => 'Données de service invalides.',
+                'errors' => $validator->errors(),
+            ], 400);
+        }
+        $service = Service::find($id);
 
         $service = $service->update([
             'nom' => $request->nom,
@@ -72,7 +102,7 @@ class ServiceController extends Controller
             'status' => 'succès',
             'message' => 'service mis à jour avec succès.',
             'data' => $service,
-        ]);
+        ], 200);
     }
 
     /**
@@ -80,11 +110,11 @@ class ServiceController extends Controller
      */
     public function destroy(string $id)
     {
-        $service = Service::findOrFail($id);
+        $service = Service::find($id);
 
 
-        $service->delete();
-
-        return response()->json(['message' => 'service supprimée avec succès.']);
+        if ($service->delete()) {
+            return response()->json(['message' => 'service supprimée avec succès.'], 200);
+        }
     }
 }
