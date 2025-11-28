@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('nom');
             $table->unsignedBigInteger('service_id');
             $table->foreign('service_id')->references('id')->on('services');
-            $table->time('heure');
+            $table->string('heure');
             $table->date('date');
             $table->timestamps();
         });

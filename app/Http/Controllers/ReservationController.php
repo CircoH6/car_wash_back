@@ -36,8 +36,8 @@ class ReservationController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'service_id' => 'required|integer',
-            'heure' => 'required|time|',
-            'date' => 'required|date|',
+            'heure' => 'required|string|',
+            'date' => 'required|string|',
         ]);
 
         if ($validator->fails()) {
@@ -91,7 +91,7 @@ class ReservationController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'service_id' => 'required|integer',
-            'heure' => 'required|time|',
+            'heure' => 'required|string|',
             'date' => 'required|date|',
         ]);
         if ($validator->fails()) {
