@@ -37,8 +37,6 @@ class AbonnementController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'service_id' => 'required|array',
-            'service_id.*' => 'exists:services,id',
             'nom' => 'required|string|max:255',
             'description' => 'required|string|max:1000',
             'prix' => 'required|numeric',
@@ -57,7 +55,7 @@ class AbonnementController extends Controller
             'prix' => $request->prix,
         ]);
 
-        $abonnement->services()->attach($request->service_id);
+        //$abonnement->services()->attach($request->service_id);
 
         return response()->json([
             'status' => 'succès',
@@ -87,8 +85,6 @@ class AbonnementController extends Controller
     public function update(Request $request, string $id)
     {
         $validator = Validator::make($request->all(), [
-            'service_id' => 'required|array',
-            'service_id.*' => 'exists:services,id',
             'nom' => 'required|string|max:255',
             'description' => 'required|string|max:1000',
             'prix' => 'required|numeric',
@@ -110,7 +106,7 @@ class AbonnementController extends Controller
             'prix' => $request->prix,
         ]);
 
-        $abonnement->services()->attach($request->service_id);
+       // Abonnement::with("services")->attach($request->service_id);
 
         return response()->json([
             'status' => 'succès',

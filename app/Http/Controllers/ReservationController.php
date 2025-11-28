@@ -34,7 +34,7 @@ class ReservationController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:reservations,name',
             'service_id' => 'required|integer',
             'heure' => 'required|string|',
             'date' => 'required|string|',

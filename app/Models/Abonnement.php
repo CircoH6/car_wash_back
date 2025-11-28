@@ -12,30 +12,19 @@ class Abonnement extends Model
 {
 
     protected $fillable = [
-        'user_id',
-        'service_id',
         'nom',
         'description',
         'prix',
     ];
 
-    public function users():BelongsToMany
-    {
-        return $this->belongsToMany(User::class);
-    }
-
-    public function services():HasMany
-    {
-        return $this->hasMany(Service::class);
-    }
-
-    public function reservations():HasManyThrough
-    {
-        return $this->hasManyThrough(Reservation::class, Service::class);
-    }
 
     public function pivot_A_S():HasMany
     {
         return $this->hasMany(Pivot_A_S::class, 'abonnement_id');
+    }
+
+    public function service():BelongsToMany
+    {
+        return $this->belongsToMany(Service::class, 'pivot__a__s', 'abonnement_id', 'service_id');
     }
 }

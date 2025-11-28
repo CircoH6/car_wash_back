@@ -11,12 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('abonnements', function (Blueprint $table) {
-            $table->id();
-            $table->string('nom');
-            $table->text('description');
-            $table->string('prix');
-            $table->timestamps();
+        Schema::table('reservations', function (Blueprint $table) {
+            $table->dropColumn('name');
+            $table->string('name')->unique();
         });
     }
 
@@ -25,6 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('abonnements');
+        Schema::table('reservations', function (Blueprint $table) {
+            //
+        });
     }
 };

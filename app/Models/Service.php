@@ -31,7 +31,7 @@ class Service extends Model
 
     public function pivot_A_S():HasMany
     {
-        return $this->hasMany(Pivot_A_S::class, 'service_id');
+        return $this->hasMany(Abonnement::class, 'pivot__a__s', 'service_id', 'abonnement_id');
     }
 
 }

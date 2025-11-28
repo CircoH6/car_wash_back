@@ -52,7 +52,9 @@ Route::middleware('auth:api')->group(function(){
     });
 
     Route::prefix('/pivotAS')->group(function(){
-        Route::get('/attach', [PivotASController::class, 'attach']);
+        Route::post('/attach', [PivotASController::class, 'attach']);
+        Route::get('/index', [PivotASController::class, 'index']);
+        Route::get('/show{id}', [PivotASController::class, 'show']);
     });
 });
     Route::get('/createRole', [AuthentificatedController::class, 'createRole']);
