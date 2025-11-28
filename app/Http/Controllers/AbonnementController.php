@@ -15,7 +15,7 @@ class AbonnementController extends Controller
      */
     public function index()
     {
-        $abonnements = Abonnement::all();
+        $abonnements = Abonnement::with(['service'])->get();
 
         if ($abonnements) {
             return response()->json([
@@ -37,6 +37,8 @@ class AbonnementController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'service_id' => 'required|array',
+            'service_id.*' => 'exists:services,id',
             'nom' => 'required|string|max:255',
             'description' => 'required|string|max:1000',
             'prix' => 'required|numeric',
@@ -55,6 +57,8 @@ class AbonnementController extends Controller
             'prix' => $request->prix,
         ]);
 
+        $abonnement->services()->attach($request->service_id);
+
         return response()->json([
             'status' => 'succès',
             'message' => 'abonnement créé avec succès.',
@@ -67,7 +71,7 @@ class AbonnementController extends Controller
      */
     public function show(string $id)
     {
-        $abonnement = Abonnement::find($id);
+        $abonnement = Abonnement::with(['service'])->find($id);
 
         if($abonnement){
             return response()->json([
@@ -83,6 +87,8 @@ class AbonnementController extends Controller
     public function update(Request $request, string $id)
     {
         $validator = Validator::make($request->all(), [
+            'service_id' => 'required|array',
+            'service_id.*' => 'exists:services,id',
             'nom' => 'required|string|max:255',
             'description' => 'required|string|max:1000',
             'prix' => 'required|numeric',
@@ -103,6 +109,8 @@ class AbonnementController extends Controller
             'description' => $request->description,
             'prix' => $request->prix,
         ]);
+
+        $abonnement->services()->attach($request->service_id);
 
         return response()->json([
             'status' => 'succès',

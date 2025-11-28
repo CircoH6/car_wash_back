@@ -80,19 +80,17 @@ class AuthentificatedController extends Controller
     }
 
     public function createRole() {
-        $adminRole = Role::create(['name' => 'admin']);
-        $permission = Permission::create(['name' => 'add service']);
-        $permission = Permission::create(['name' => 'add reservation']);
-        $permission = Permission::create(['name' => 'add abonnement']);
-        $permission = Permission::create(['name' => 'edit service']);
-        $permission = Permission::create(['name' => 'edit reservation']);
-        $permission = Permission::create(['name' => 'edit abonnement']);
-        $permission = Permission::create(['name' => 'delete service']);
-        $permission = Permission::create(['name' => 'delete reservation']);
-        $permission = Permission::create(['name' => 'delete abonnement']);
-
-        $role->givePermission($permission);
-        $permission->assignRole($role);
+       // $role = Role::create(['name' => 'admin']);
+        $role = Role::create(['name' => 'utilisateur']);
+       // $permissionAdd = Permission::create(['name' => 'add']);
+        // $permission = Permission::create(['name' => 'edit']);
+        // $permission = Permission::create(['name' => 'delete']);
+        /* $roleAdmin = Role::find(1);
+        $UserAdmin = User::find(1); */
+        //$permissionDelete = Permission::find(3);
+       // dd($roleAdmin);
+        //$roleAdmin->givePermissionTo($permissionDelete);
+        //$UserAdmin->assignRole($roleAdmin);
     }
 
 }

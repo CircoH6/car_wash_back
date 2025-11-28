@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Reservation;
-use App\Models\User;
 use App\Models\Service;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -16,9 +15,9 @@ class ReservationController extends Controller
      */
     public function index()
     {
-        $reservations = Reservation::with(['user', 'service'])->get();
+        $reservations = Reservation::with(['service'])->get();
 
-        if($reservations){
+        if ($reservations) {
             return response()->json([
                 'data' => $reservations,
                 'status' => 'success',
@@ -35,7 +34,7 @@ class ReservationController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required|integer|',
+            'name' => 'required|string|max:255',
             'service_id' => 'required|integer',
             'heure' => 'required|time|',
             'date' => 'required|date|',
@@ -50,7 +49,7 @@ class ReservationController extends Controller
         }
 
         $reservation = Reservation::create([
-            'user_id' => $request->user_id,
+            'name' => $request->name,
             'service_id' => $request->service_id,
             'heure' => $request->heure,
             'date' => $request->date,
@@ -63,12 +62,12 @@ class ReservationController extends Controller
         ], 200);
     }
 
-     /**
+    /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
-        $reservation = Reservation::with(['user', 'service'])->find($id);
+        $reservation = Reservation::with(['service'])->find($id);
 
         if ($reservation) {
             return response()->json([
@@ -79,7 +78,7 @@ class ReservationController extends Controller
         }
 
         return response()->json([
-            'status'=> 'échec',
+            'status' => 'échec',
             'message' => 'Aucune réservation trouvé.',
         ]);
     }
@@ -90,12 +89,12 @@ class ReservationController extends Controller
     public function update(Request $request, string $id)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required|integer|',
+            'name' => 'required|string|max:255',
             'service_id' => 'required|integer',
             'heure' => 'required|time|',
             'date' => 'required|date|',
         ]);
-        if($validator->fails()){
+        if ($validator->fails()) {
             return response()->json([
                 'status' => 'Échec',
                 'message' => 'Données de réservation invalidées.',

@@ -3,23 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Reservation extends Model
 {
     protected $fillable = [
-        'user_id',
+        'name',
         'service_id',
         'heure',
         'date',
     ];
 
-    public function user()
+    public function service():HasOne
     {
-        return $this->belongsToMany(User::class);
-    }
-
-    public function service()
-    {
-        return $this->belongsTo(Service::class);
+        return $this->hasOne(Service::class);
     }
 }
