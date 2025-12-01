@@ -81,7 +81,7 @@ class AuthentificatedController extends Controller
 
     public function createRole() {
        // $role = Role::create(['name' => 'admin']);
-        $role = Role::create(['name' => 'utilisateur']);
+       //$role = Role::create(['name' => 'utilisateur']);
        // $permissionAdd = Permission::create(['name' => 'add']);
         // $permission = Permission::create(['name' => 'edit']);
         // $permission = Permission::create(['name' => 'delete']);

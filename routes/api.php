@@ -8,6 +8,7 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\AuthentificatedController;
 use App\Http\Controllers\PivotASController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Middleware\VerifierRole;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -22,7 +23,7 @@ Route::get('/reservations/index', [ReservationController::class, 'index']);
 Route::get('/abonnements/index', [AbonnementController::class, 'index']);
 Route::get('/abonnes/index', [AbonneController::class, 'index']);
 
-Route::middleware('auth:api')->group(function(){
+Route::middleware('auth:api','verifierRole')->group(function(){
     Route::prefix('/services')->group(function () {
         Route::post('/store', [ServiceController::class, 'store']);
         Route::get('/show', [ServiceController::class, 'show']);
@@ -58,3 +59,4 @@ Route::middleware('auth:api')->group(function(){
     });
 });
     Route::get('/createRole', [AuthentificatedController::class, 'createRole']);
+
